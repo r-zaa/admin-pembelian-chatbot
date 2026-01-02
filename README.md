@@ -55,12 +55,14 @@ Atur koneksi database di: config/db.js
 npm start
 Akses di browser:http://localhost:(port name)
 
+---
 
 ### Catatan
 File .env tidak disertakan demi keamanan
 
 Pastikan MySQL dan Ollama sudah berjalan
 
+---
 ### Author
 
 Nama: Muhammad Fahreza Saidasmawan
