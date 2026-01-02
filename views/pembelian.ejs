@@ -1,0 +1,56 @@
+<% layout('layout', { title: 'Pembelian' }) %>
+
+<h2 class="mb-4">Pembelian</h2>
+
+<!-- Form tambah pembelian -->
+<form action="/pembelian/tambah" method="POST" class="row g-3 mb-4">
+  <div class="col-md-6">
+    <label for="produk_id" class="form-label">Pilih Produk</label>
+    <select name="produk_id" id="produk_id" class="form-select" required>
+      <% data2.forEach(function(p) { %>
+        <option value="<%= p.id %>">
+          <%= p.nama_produk %> (Stok: <%= p.jumlah %>)
+        </option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <label for="qty" class="form-label">Jumlah</label>
+    <input type="number" name="qty" id="qty" class="form-control" min="1" required>
+  </div>
+
+  <div class="col-md-2 align-self-end">
+    <button class="btn btn-success w-100">Tambah</button>
+  </div>
+</form>
+
+<!-- Tabel pembelian -->
+<table class="table table-bordered table-hover shadow-sm">
+  <thead class="table-primary">
+    <tr>
+      <th>#</th>
+      <th>Produk</th>
+      <th>Qty</th>
+      <th>Total</th>
+      <th>Status</th>
+      <th>Aksi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% data.forEach(function(p, index) { %>
+      <tr class="<%= p.status === 'CANCEL' ? 'table-danger' : '' %>">
+        <td><%= index + 1 %></td>
+        <td><%= p.nama_produk %></td>
+        <td><%= p.qty %></td>
+        <td>Rp <%= p.total ? p.total.toLocaleString() : 0 %></td>
+        <td><%= p.status %></td>
+        <td>
+          <% if (p.status === 'AKTIF') { %>
+            <a href="/pembelian/cancel/<%= p.id %>" class="btn btn-sm btn-danger">Cancel</a>
+          <% } %>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

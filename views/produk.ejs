@@ -1,0 +1,140 @@
+<% layout('layout', { title: 'Daftar Produk' }) %>
+
+    <h2 class="mb-4">Daftar Produk</h2>
+    <form action="/produk/tambah" method="POST" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label for="qty" class="form-label">Nama Produk</label>
+            <input type="text" name="nama_produk" id="nama_produk" class="form-control" required>
+        </div>
+
+        <div class="col-md-3">
+            <label for="harga" class="form-label">Harga</label>
+            <input type="text" name="harga" id="harga" class="form-control" required>
+        </div>
+
+        <div class="col-md-3">
+            <label for="jumlah" class="form-label">Stock</label>
+            <input type="number" name="jumlah" id="jumlah" class="form-control" min="1" required>
+        </div>
+
+        <div class="col-md-2 align-self-end">
+            <button class="btn btn-success w-100">Tambah</button>
+        </div>
+    </form>
+
+    <table class="table table-striped table-hover shadow-sm">
+        <thead class="table-primary">
+            <tr>
+                <th>#</th>
+                <th>Nama Produk</th>
+                <th>Harga</th>
+                <th>Stok</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% data.forEach((p, index)=> { %>
+                <tr>
+                    <td>
+                        <%= index + 1 %>
+                    </td>
+
+                    <td>
+                        <%= p.nama_produk %>
+                    </td>
+                    <td>Rp <%= p.harga.toLocaleString() %>
+                    </td>
+                    <td>
+                        <%= p.jumlah ? p.jumlah : 0 %>
+                    </td>
+                    <td>
+                        <!-- EDIT -->
+                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                            data-id="<%= p.id_produk %>" data-nama="<%= p.nama_produk %>" data-harga="<%= p.harga %>"
+                            data-jumlah="<%= p.jumlah %>">
+                            Edit
+                        </button>
+
+                        <!-- DELETE -->
+                        <form action="/produk/hapus/<%= p.id_produk %>" method="POST" style="display:inline;"
+                            onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
+                            <button class="btn btn-danger btn-sm">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }) %>
+        </tbody>
+
+    </table>
+    <!-- Modal Edit -->
+    <div class="modal fade" id="editModal" tabindex="-1">
+        <div class="modal-dialog">
+            <form method="POST" id="formEdit">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Produk</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="edit_id">
+
+                        <div class="mb-3">
+                            <label>Nama Produk</label>
+                            <input type="text" class="form-control" name="nama_produk" id="edit_nama" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Harga</label>
+                            <input type="text" class="form-control" name="harga" id="edit_harga" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Stok</label>
+                            <input type="number" class="form-control" name="jumlah" id="edit_jumlah" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function formatHarga(input) {
+            let value = input.value.replace(/\./g, '');
+            if (!isNaN(value) && value !== '') {
+                input.value = Number(value).toLocaleString('id-ID');
+            }
+        }
+    </script>
+
+    <script>
+        document.getElementById('harga').addEventListener('input', function () {
+            formatHarga(this);
+        });
+        document.getElementById('edit_harga').addEventListener('input', function () {
+            formatHarga(this);
+        });
+
+        const editModal = document.getElementById('editModal');
+
+        editModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+
+            document.getElementById('edit_id').value = button.getAttribute('data-id');
+            document.getElementById('edit_nama').value = button.getAttribute('data-nama');
+
+            const hargaInput = document.getElementById('edit_harga');
+            hargaInput.value = button.getAttribute('data-harga');
+            formatHarga(hargaInput); 
+
+            document.getElementById('edit_jumlah').value = button.getAttribute('data-jumlah');
+
+            document.getElementById('formEdit').action =
+                '/produk/update/' + button.getAttribute('data-id');
+        });
+    </script>

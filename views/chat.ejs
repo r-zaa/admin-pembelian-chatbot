@@ -1,0 +1,66 @@
+<% layout('layout', { title: 'Chatbot AI' }) %>
+
+<div class="chat-container">
+    <h1>Chatbot AI</h1>
+
+    <div id="chat-box" class="chat-box"></div>
+
+    <form id="chat-form">
+        <input type="text" id="message" placeholder="Tulis pesan..." autocomplete="off" required>
+        <button type="submit">Kirim</button>
+    </form>
+</div>
+
+<style>
+.chat-container { width: 100%; max-width: 600px; margin: 20px auto; }
+.chat-box { height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 10px; background: #f9f9f9; }
+.chat-message { margin: 5px 0; padding: 8px 12px; border-radius: 20px; max-width: 75%; word-wrap: break-word; }
+.user { background: #007bff; color: white; margin-left: auto; text-align: right; }
+.ai { background: #e5e5ea; color: black; margin-right: auto; text-align: left; }
+#chat-form { display: flex; margin-top: 10px; }
+#message { flex: 1; padding: 10px; border-radius: 20px; border: 1px solid #ccc; }
+#chat-form button { margin-left: 5px; padding: 10px 15px; border-radius: 20px; border: none; background: #007bff; color: white; }
+</style>
+
+<script>
+const form = document.getElementById('chat-form');
+const chatBox = document.getElementById('chat-box');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const messageInput = document.getElementById('message');
+    const userMessage = messageInput.value.trim();
+    if(!userMessage) return;
+
+    // tampilkan pesan user
+    const userDiv = document.createElement('div');
+    userDiv.classList.add('chat-message','user');
+    userDiv.innerText = userMessage;
+    chatBox.appendChild(userDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    messageInput.value = '';
+
+    // kirim ke server via fetch
+    try {
+        const res = await fetch('/chat/json', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userMessage })
+        });
+        const data = await res.json();
+
+        // tampilkan pesan AI
+        const aiDiv = document.createElement('div');
+        aiDiv.classList.add('chat-message','ai');
+        aiDiv.innerText = data.response;
+        chatBox.appendChild(aiDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    } catch(err) {
+        const errDiv = document.createElement('div');
+        errDiv.classList.add('chat-message','ai');
+        errDiv.innerText = 'AI sedang bermasalah.';
+        chatBox.appendChild(errDiv);
+    }
+});
+</script>
