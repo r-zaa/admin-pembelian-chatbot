@@ -56,10 +56,13 @@ npm start
 Akses di browser:http://localhost:(port name)
 
 
-**Catatan**
+### Catatan
 File .env tidak disertakan demi keamanan
 
 Pastikan MySQL dan Ollama sudah berjalan
 
+### Author
+
+Nama: Muhammad Fahreza Saidasmawan
 
 
